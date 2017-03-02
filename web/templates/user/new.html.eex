@@ -1,0 +1,2 @@
+<h1>Introduce yourself</h1>
+<%= render "_new.html", changeset: @changeset, action: user_path(@conn, :create) %>

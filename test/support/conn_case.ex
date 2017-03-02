@@ -13,6 +13,8 @@ defmodule Feedya.ConnCase do
   of the test unless the test case is marked as async.
   """
 
+  alias Feedya.User
+
   use ExUnit.CaseTemplate
 
   using do
