@@ -1,0 +1,1 @@
+<%= @story.author %>: <a href="<%= @story.url %>"><%= @story.title %></a> (<%= @story.score %>)

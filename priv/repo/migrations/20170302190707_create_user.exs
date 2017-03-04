@@ -10,6 +10,5 @@ defmodule Feedya.Repo.Migrations.CreateUser do
 
       timestamps()
     end
-
   end
 end

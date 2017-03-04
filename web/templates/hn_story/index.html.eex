@@ -1,0 +1,7 @@
+<h1>HackerNews</h1>
+
+<div>
+  <%= for story <- @stories do %>
+    <p><%= render "_story.html", story: story %></p>
+  <% end %>
+</div>
