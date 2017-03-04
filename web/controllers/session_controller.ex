@@ -31,7 +31,7 @@ defmodule Feedya.SessionController do
   # was found
   def unauthenticated(conn, _) do
     conn
-    |> put_status(401)
+    |> put_status(302)
     |> put_flash(:error, "You aren't allowed to do this")
     |> redirect(to: "/login")
   end
