@@ -41,7 +41,7 @@ defmodule Feedya.User do
 
   defp confirm_password(nil, _, user_params), do: {:error, user_params}
   defp confirm_password(user, password, user_params) do
-    case Bcrypt.checkpw(password, user.password_digest) do
+    if Bcrypt.checkpw(password, user.password_digest) do
       {:ok, user}
     else
       {:error, user_params}
