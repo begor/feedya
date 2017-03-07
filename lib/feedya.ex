@@ -14,6 +14,7 @@ defmodule Feedya do
       supervisor(Feedya.Endpoint, []),
       # Start your own worker by calling: Feedya.Worker.start_link(arg1, arg2, arg3)
       # worker(Feedya.Worker, [arg1, arg2, arg3]),
+      worker(Feedya.CrawlerWorker, [&Feedya.HNStory.fetch_top!/0]) # TODO: supervisor
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

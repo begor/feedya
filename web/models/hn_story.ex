@@ -4,8 +4,6 @@ defmodule Feedya.HNStory do
   alias Feedya.API.HN
   alias Feedya.Repo
 
-  @required [:id, :title, :by, :score, :type]
-
   schema "hn_stories" do
     field :hn_id, :integer
     field :url, :string
@@ -25,8 +23,8 @@ defmodule Feedya.HNStory do
 
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, @required)
-    |> validate_required(@required)
+    |> cast(params, [:id, :url, :title, :by, :score, :type])
+    |> validate_required([:id, :title, :by, :score, :type])
     |> map_fields
   end
 

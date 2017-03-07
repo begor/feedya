@@ -7,6 +7,6 @@ defmodule Feedya.HNStoryController do
 
   def index(conn, _params) do
     render(conn, "index.html", stories: Repo.all(from h in HNStory,
-                                                 order_by: [desc: h.score]))
+                                                 order_by: [desc: h.hn_id]))
   end
 end
