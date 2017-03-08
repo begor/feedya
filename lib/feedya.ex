@@ -14,13 +14,17 @@ defmodule Feedya do
       supervisor(Feedya.Endpoint, []),
       # Start your own worker by calling: Feedya.Worker.start_link(arg1, arg2, arg3)
       # worker(Feedya.Worker, [arg1, arg2, arg3]),
-      worker(Feedya.CrawlerWorker, [&Feedya.HNStory.fetch_top!/0]) # TODO: supervisor
+      supervisor(Feedya.CrawlerSupervisor, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: Feedya.Supervisor]
-    Supervisor.start_link(children, opts)
+    main_supervisor = Supervisor.start_link(children, opts)
+
+    Feedya.CrawlerSupervisor.start_crawlers!
+
+    main_supervisor
   end
 
   # Tell Phoenix to update the endpoint configuration
