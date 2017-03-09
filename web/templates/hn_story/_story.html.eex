@@ -1,0 +1,1 @@
+<%= @story.author %>: <a target="_blank" href=<%= @story.url %>><%= @story.title %></a> (<%= @story.score %>)
