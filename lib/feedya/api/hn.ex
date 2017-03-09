@@ -32,7 +32,7 @@ defmodule Feedya.API.HN do
 
   defp fetch_from_url(url) do
     {:ok, resp} = get(url)
-    {:ok, resp.body}
+    resp.body
   end
 
 end

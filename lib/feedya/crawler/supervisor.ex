@@ -1,4 +1,4 @@
-defmodule Feedya.CrawlerSupervisor do
+defmodule Feedya.Crawler.Supervisor do
   use Supervisor
 
   def start_link do
@@ -6,7 +6,7 @@ defmodule Feedya.CrawlerSupervisor do
   end
 
   def init(_) do
-    children = [worker(Feedya.CrawlerWorker, [])]
+    children = [worker(Feedya.Crawler.Worker, [])]
 
     supervise(children, strategy: :simple_one_for_one)
   end

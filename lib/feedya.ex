@@ -8,13 +8,10 @@ defmodule Feedya do
 
     # Define workers and child supervisors to be supervised
     children = [
-      # Start the Ecto repository
       supervisor(Feedya.Repo, []),
-      # Start the endpoint when the application starts
       supervisor(Feedya.Endpoint, []),
-      # Start your own worker by calling: Feedya.Worker.start_link(arg1, arg2, arg3)
-      # worker(Feedya.Worker, [arg1, arg2, arg3]),
-      supervisor(Feedya.CrawlerSupervisor, [])
+      supervisor(Feedya.Crawler.Supervisor, []),
+      supervisor(Feedya.Indexer.Supervisor, []),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
@@ -22,8 +19,8 @@ defmodule Feedya do
     opts = [strategy: :one_for_one, name: Feedya.Supervisor]
     main_supervisor = Supervisor.start_link(children, opts)
 
-    Feedya.CrawlerSupervisor.start_crawlers!
-
+    Feedya.Crawler.Supervisor.start_crawlers!
+    Feedya.Indexer.Supervisor.start_indexers!
     main_supervisor
   end
 

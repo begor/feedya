@@ -24,6 +24,17 @@ defmodule Feedya.HN.Story do
     |> cast(params, [:id, :url, :title, :by, :score, :type])
     |> validate_required([:id, :title, :by, :score, :type])
     |> map_fields
+    |> unique_constraint(:hn_id)
+  end
+
+  def since(q, datetime) do
+    from s in q,
+    where: s.inserted_at > ^datetime
+  end
+
+  def search(q, search_term, limit \\ 0.15) do
+    from s in q,
+    where: fragment("similarity(?, ?) > ?", s.title, ^search_term, ^limit)
   end
 
   def already_fetched(ids) do
@@ -34,24 +45,23 @@ defmodule Feedya.HN.Story do
     )
   end
 
-  def new!(story) do
-    Repo.insert!(Feedya.HN.Story.changeset(%Feedya.HN.Story{}, story))
+  def max_fetched do
+    Repo.one(from s in Feedya.HNStory, select: max(s.hn_id)) || 0
   end
 
-  def get_story!(id) do
-    {:ok, story} = HN.story(id)
-    story
+  def create!(story) do
+    Repo.insert!(Feedya.HNStory.changeset(%Feedya.HNStory{}, story))
   end
 
-  def fetch_new! do
+  def save_new! do
     fetch_many!(&HN.new_ids/0)
   end
 
-  def fetch_top! do
+  def save_top! do
     fetch_many!(&HN.top_ids/0)
   end
 
-  def fetch_best! do
+  def save_best! do
     fetch_many!(&HN.best_ids/0)
   end
 
@@ -68,15 +78,17 @@ defmodule Feedya.HN.Story do
     |> put_change(:hn_id, hn_id)
   end
 
-  defp fetch_many!(api_func) do
-    {:ok, ids} = api_func.()
-    ids_to_fetch = ids -- already_fetched(ids)
-    for id <- ids_to_fetch, do: spawn(
-      fn ->
-        id
-        |> get_story!
-        |> new!
-      end
-    )
+  defp fetch_many!(get_ids) do
+    max_id = max_fetched
+    ids = get_ids.()
+    to_fetch = ids -- already_fetched(ids)
+
+    to_fetch
+    |> Flow.from_enumerable
+    |> Flow.partition(stages: 100)
+    |> Flow.map(&HN.story/1)
+    |> Flow.partition(stages: 100)
+    |> Flow.map(&create!/1)
+    |> Flow.run
   end
 end

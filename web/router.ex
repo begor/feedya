@@ -23,6 +23,7 @@ defmodule Feedya.Router do
 
     resources "/users", UserController
     resources "/hn/stories", HN.StoryController
+    resources "/hn", HNSubscriptionController
 
     get "/", PageController, :index
     get "/my", PageController, :profile

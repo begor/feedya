@@ -40,6 +40,7 @@ defmodule Feedya.Mixfile do
      {:cowboy, "~> 1.0"},
      {:guardian, "~> 0.14"},
      {:comeonin, "~> 2.3"},
+     {:flow, "~> 0.11"},
      {:httpoison, "~> 0.10.0"}]
   end
 
