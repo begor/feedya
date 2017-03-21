@@ -1,4 +1,4 @@
-defmodule Feedya.HNStory do
+defmodule Feedya.HN.Story do
   use Feedya.Web, :model
 
   alias Feedya.API.HN
@@ -17,9 +17,7 @@ defmodule Feedya.HNStory do
     timestamps()
   end
 
-
   ## Interface ##
-
 
   def changeset(struct, params \\ %{}) do
     struct
@@ -30,14 +28,14 @@ defmodule Feedya.HNStory do
 
   def already_fetched(ids) do
     Repo.all(
-      from s in Feedya.HNStory,
+      from s in Feedya.HN.Story,
       where: s.hn_id in ^ids,
       select: s.hn_id
     )
   end
 
   def new!(story) do
-    Repo.insert!(Feedya.HNStory.changeset(%Feedya.HNStory{}, story))
+    Repo.insert!(Feedya.HN.Story.changeset(%Feedya.HN.Story{}, story))
   end
 
   def get_story!(id) do
@@ -59,7 +57,6 @@ defmodule Feedya.HNStory do
 
   ## Implementation ##
 
-
   defp map_fields(changeset) do
     hn_id = get_change(changeset, :id)
     author = get_change(changeset, :by)
@@ -79,6 +76,7 @@ defmodule Feedya.HNStory do
         id
         |> get_story!
         |> new!
-      end)
+      end
+    )
   end
 end
