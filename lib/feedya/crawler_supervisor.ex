@@ -16,8 +16,8 @@ defmodule Feedya.CrawlerSupervisor do
   end
 
   defp crawlers do
-    [&Feedya.HNStory.fetch_top!/0,
-     &Feedya.HNStory.fetch_new!/0,
-     &Feedya.HNStory.fetch_best!/0]
+    [&Feedya.HN.Story.fetch_top!/0,
+     &Feedya.HN.Story.fetch_new!/0,
+     &Feedya.HN.Story.fetch_best!/0]
   end
 end

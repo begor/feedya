@@ -18,4 +18,4 @@ params = %{first_name: "Charles",
 changeset = Feedya.User.changeset(%Feedya.User{}, params)
 
 Feedya.Repo.insert!(changeset)
-Feedya.HNStory.fetch_top!
+Feedya.HN.Story.fetch_top!
