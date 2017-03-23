@@ -1,8 +1,7 @@
 defmodule Feedya.HN.Story do
   use Feedya.Web, :model
 
-  alias Feedya.API.HN
-  alias Feedya.Repo
+  alias Feedya.{API.HN, Repo, HN.Story}
 
   schema "hn_stories" do
     field :hn_id, :integer
@@ -39,18 +38,18 @@ defmodule Feedya.HN.Story do
 
   def already_fetched(ids) do
     Repo.all(
-      from s in Feedya.HN.Story,
+      from s in Story,
       where: s.hn_id in ^ids,
       select: s.hn_id
     )
   end
 
   def max_fetched do
-    Repo.one(from s in Feedya.HNStory, select: max(s.hn_id)) || 0
+    Repo.one(from s in Story, select: max(s.hn_id)) || 0
   end
 
   def create!(story) do
-    Repo.insert!(Feedya.HNStory.changeset(%Feedya.HNStory{}, story))
+    Repo.insert!(Story.changeset(%Story{}, story))
   end
 
   def save_new! do

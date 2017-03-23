@@ -2,6 +2,8 @@
 defmodule Feedya.Indexer.Worker do
   use GenServer
 
+  alias Feedya.HN.Subscription
+
   @period 30 * 1000
 
   def start_link(subscription, opts \\ []) do
@@ -14,7 +16,7 @@ defmodule Feedya.Indexer.Worker do
   end
 
   def handle_info(:index, subscription) do
-    Feedya.HNSubscription.index!(subscription)
+    Subscription.index!(subscription)
     schedule_work
     {:noreply, subscription}
   end

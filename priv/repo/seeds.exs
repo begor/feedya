@@ -28,14 +28,14 @@ defmodule Seeds do
                 terms: ["HTML", "CSS", "Rust"],
                 name: "Test #2"}
 
-    changeset = Feedya.HNSubscription.changeset(%Feedya.HNSubscription{}, params1)
+    changeset = Feedya.HN.Subscription.changeset(%Feedya.HN.Subscription{}, params1)
     Feedya.Repo.insert!(changeset)
 
-    changeset = Feedya.HNSubscription.changeset(%Feedya.HNSubscription{}, params2)
+    changeset = Feedya.HN.Subscription.changeset(%Feedya.HN.Subscription{}, params2)
     Feedya.Repo.insert!(changeset)
   end
 end
 
 Seeds.create_user
 Seeds.create_subscriptions
-Feedya.HNStory.save_top!
+Feedya.HN.Story.save_top!

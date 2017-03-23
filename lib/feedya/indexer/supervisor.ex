@@ -1,6 +1,8 @@
 defmodule Feedya.Indexer.Supervisor do
   use Supervisor
 
+  alias Feedya.{Repo, HN.Subscription}
+
   def start_link do
     Supervisor.start_link(__MODULE__, [], name: __MODULE__)
   end
@@ -20,6 +22,6 @@ defmodule Feedya.Indexer.Supervisor do
   end
 
   defp subscriptions do
-    Feedya.Repo.all(Feedya.HNSubscription)
+    Repo.all(Subscription)
   end
 end

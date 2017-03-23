@@ -1,20 +1,20 @@
-defmodule Feedya.HNSubscriptionController do
+defmodule Feedya.HN.SubscriptionController do
   use Feedya.Web, :controller
 
-  alias Feedya.{HNSubscription, User}
+  alias Feedya.{HN.Subscription, User, Indexer}
 
   def new(conn, _params) do
-    changeset = HNSubscription.changeset(%HNSubscription{})
+    changeset = Subscription.changeset(%Subscription{})
     render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"hn_subscription" => params}) do
     params = prepare_params(params, Guardian.Plug.current_resource(conn).id)
-    changeset = HNSubscription.changeset(%HNSubscription{}, params)
+    changeset = Subscription.changeset(%Subscription{}, params)
 
     case Repo.insert(changeset) do
       {:ok, hn_subscription} ->
-        Feedya.Indexer.Supervisor.start!(hn_subscription)
+        Indexer.Supervisor.start!(hn_subscription)
         conn
         |> put_flash(:info, "Hn subscription created successfully.")
         |> redirect(to: page_path(conn, :profile))
@@ -24,15 +24,15 @@ defmodule Feedya.HNSubscriptionController do
   end
 
   def edit(conn, %{"id" => id}) do
-    hn_subscription = Repo.get!(HNSubscription, id)
-    changeset = HNSubscription.changeset(hn_subscription)
+    hn_subscription = Repo.get!(Subscription, id)
+    changeset = Subscription.changeset(hn_subscription)
     render(conn, "edit.html", hn_subscription: hn_subscription, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "hn_subscription" => params}) do
-    hn_subscription = Repo.get!(HNSubscription, id)
+    hn_subscription = Repo.get!(Subscription, id)
     params = prepare_params(params, Guardian.Plug.current_resource(conn).id)
-    changeset = HNSubscription.changeset(hn_subscription, params)
+    changeset = Subscription.changeset(hn_subscription, params)
 
     case Repo.update(changeset) do
       {:ok, hn_subscription} ->
@@ -45,7 +45,7 @@ defmodule Feedya.HNSubscriptionController do
   end
 
   def delete(conn, %{"id" => id}) do
-    hn_subscription = Repo.get!(HNSubscription, id)
+    hn_subscription = Repo.get!(Subscription, id)
     Repo.delete!(hn_subscription)
 
     conn

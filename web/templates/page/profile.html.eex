@@ -9,6 +9,6 @@
   <p>Nothing here... yet.</p>
 <% else %>
   <%= for sub <- @hn_subscriptions do %>
-    <p><%= render Feedya.HNSubscriptionView, "show.html", hn_subscription: sub, conn: @conn %></p>
+    <p><%= render Feedya.HN.SubscriptionView, "show.html", hn_subscription: sub, conn: @conn %></p>
   <% end %>
 <% end %>

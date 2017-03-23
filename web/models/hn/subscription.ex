@@ -1,16 +1,16 @@
-defmodule Feedya.HNSubscription do
+defmodule Feedya.HN.Subscription do
   use Feedya.Web, :model
 
   alias Ecto.Changeset
-  alias Feedya.{Repo, HNSubscription, HNStory}
+  alias Feedya.{Repo, HN.Subscription, HN.Story, User}
 
   @required [:terms, :name, :user_id]
 
   schema "hn_subscriptions" do
     field :name, :string
     field :terms, {:array, :string}
-    belongs_to :user, Feedya.User
-    many_to_many :stories, Feedya.HNStory, join_through: "hn_subscription_stories", on_replace: :delete
+    belongs_to :user, User
+    many_to_many :stories, Story, join_through: "hn_subscription_stories", on_replace: :delete
 
     timestamps()
   end
@@ -25,7 +25,7 @@ defmodule Feedya.HNSubscription do
   end
 
   def by_user(user) do
-    query = from p in HNSubscription,
+    query = from p in Subscription,
             where: p.user_id == ^user.id,
             select: p,
             preload: [:stories]
@@ -45,15 +45,15 @@ defmodule Feedya.HNSubscription do
   ### Implementation ###
 
   defp find_matched(term, nil) do
-    HNStory
-    |> HNStory.search(term)
+    Story
+    |> Story.search(term)
     |> Repo.all
   end
 
   defp find_matched(term, indexed_at) do
-    HNStory
-    |> HNStory.since(indexed_at)
-    |> HNStory.search(term)
+    Story
+    |> Story.since(indexed_at)
+    |> Story.search(term)
     |> Repo.all
   end
 

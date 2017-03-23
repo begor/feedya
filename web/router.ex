@@ -22,8 +22,8 @@ defmodule Feedya.Router do
     pipe_through [:browser, :browser_auth] # Use the default browser stack
 
     resources "/users", UserController
-    resources "/hn/stories", HN.StoryController
-    resources "/hn", HNSubscriptionController
+    resources "/hn/stories", HN.StoryController, name: "hn_story"
+    resources "/hn", HN.SubscriptionController, name: "hn_subscription"
 
     get "/", PageController, :index
     get "/my", PageController, :profile
