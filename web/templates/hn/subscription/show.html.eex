@@ -1,0 +1,16 @@
+<h3><%= @hn_subscription.name %></h3>
+<%= link("Edit", to: hn_subscription_path(@conn, :edit, @hn_subscription), method: :get) %>  |
+<%= link("Delete", to: hn_subscription_path(@conn, :delete, @hn_subscription), method: :delete) %>
+<h4>Terms:</h4>
+<p><%= Enum.join(@hn_subscription.terms, ", ") %></p>
+
+<%= if length(@hn_subscription.stories) > 0 do %>
+  <h4>Stories <span class="badge"><%=length(@hn_subscription.stories)%></span>:</h4>
+  <ul class="list-group">
+    <%= for story <- Enum.sort_by(@hn_subscription.stories, fn(s) -> -s.score end)  do %>
+      <li class="list-group-item"><%= render Feedya.HN.StoryView, "_story.html", story: story, conn: @conn %></li>
+    <% end %>
+  </ul>
+<%= else %>
+  <h4>Nothing here yet. Check back shortly.</h4>
+<%= end %>

@@ -1,3 +1,14 @@
-<h1>Welcome, <%= @user.first_name %></h1>
-<h3>HackerNews</h3>
-<p><a href=<%= story_path(@conn, :index) %>>All stories</a></p>
+<div class="page-header">
+  <h1>Welcome, <%= @user.first_name %>.<br>
+  <small>Here is your subscriptions</small></h1>
+</div>
+
+<h2><a href="https://news.ycombinator.com/">HackerNews</a></h2>
+<%= link("Create new", to: hn_subscription_path(@conn, :new), method: :get) %>
+<%= if length(@hn_subscriptions) == 0 do %>
+  <p>Nothing here... yet.</p>
+<% else %>
+  <%= for sub <- @hn_subscriptions do %>
+    <p><%= render Feedya.HN.SubscriptionView, "show.html", hn_subscription: sub, conn: @conn %></p>
+  <% end %>
+<% end %>

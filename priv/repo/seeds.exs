@@ -9,13 +9,33 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+defmodule Seeds do
+  def create_user do
+    params = %{first_name: "Charles",
+               last_name: "Mingus",
+               email: "foo@example.com",
+               password: "qwerty",
+               password_confirmation: "qwerty"}
+    changeset = Feedya.User.changeset(%Feedya.User{}, params)
+    Feedya.Repo.insert!(changeset)
+  end
 
-params = %{first_name: "Charles",
-           last_name: "Mingus",
-           email: "foo@example.com",
-           password: "qwerty",
-           password_confirmation: "qwerty"}
-changeset = Feedya.User.changeset(%Feedya.User{}, params)
+  def create_subscriptions do
+    params1 = %{user_id: 1,
+                terms: ["Elixir", "Erlang", "Python", "Ruby", "CIA"],
+                name: "Test #1"}
+    params2 = %{user_id: 1,
+                terms: ["HTML", "CSS", "Rust"],
+                name: "Test #2"}
 
-Feedya.Repo.insert!(changeset)
-Feedya.HN.Story.fetch_top!
+    changeset = Feedya.HN.Subscription.changeset(%Feedya.HN.Subscription{}, params1)
+    Feedya.Repo.insert!(changeset)
+
+    changeset = Feedya.HN.Subscription.changeset(%Feedya.HN.Subscription{}, params2)
+    Feedya.Repo.insert!(changeset)
+  end
+end
+
+Seeds.create_user
+Seeds.create_subscriptions
+Feedya.HN.Story.save_top!

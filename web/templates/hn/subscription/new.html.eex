@@ -1,0 +1,6 @@
+<h2>New HackerNews subscription</h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: hn_subscription_path(@conn, :create) %>
+
+<%= link "Back", to: page_path(@conn, :profile) %>

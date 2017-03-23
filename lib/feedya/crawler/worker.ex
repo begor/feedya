@@ -1,5 +1,5 @@
 # NOTE: just a high-level concept, still very much WIP
-defmodule Feedya.CrawlerWorker do
+defmodule Feedya.Crawler.Worker do
   use GenServer
 
   @period 10 * 1000
