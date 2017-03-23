@@ -24,12 +24,10 @@ defmodule Feedya.HN.Subscription do
     |> validate_required(@required)
   end
 
-  def by_user(user) do
-    query = from p in Subscription,
-            where: p.user_id == ^user.id,
-            select: p,
-            preload: [:stories]
-    Repo.all(query)
+  def by_user(q, user) do
+    from s in q,
+    where: s.user_id == ^user.id,
+    preload: [:stories]
   end
 
   def index!(subscription) do
