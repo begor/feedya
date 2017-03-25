@@ -8,7 +8,7 @@ defmodule Feedya.HN.SubscriptionController do
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn, %{"hn_subscription" => params}) do
+  def create(conn, %{"subscription" => params}) do
     params = prepare_params(params, Guardian.Plug.current_resource(conn).id)
     changeset = Subscription.changeset(%Subscription{}, params)
 
@@ -16,7 +16,7 @@ defmodule Feedya.HN.SubscriptionController do
       {:ok, hn_subscription} ->
         Indexer.Supervisor.start!(hn_subscription)
         conn
-        |> put_flash(:info, "Hn subscription created successfully.")
+        |> put_flash(:info, "Subscription created successfully.")
         |> redirect(to: page_path(conn, :profile))
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -29,7 +29,7 @@ defmodule Feedya.HN.SubscriptionController do
     render(conn, "edit.html", hn_subscription: hn_subscription, changeset: changeset)
   end
 
-  def update(conn, %{"id" => id, "hn_subscription" => params}) do
+  def update(conn, %{"id" => id, "subscription" => params}) do
     hn_subscription = Repo.get!(Subscription, id)
     params = prepare_params(params, Guardian.Plug.current_resource(conn).id)
     changeset = Subscription.changeset(hn_subscription, params)
@@ -37,7 +37,7 @@ defmodule Feedya.HN.SubscriptionController do
     case Repo.update(changeset) do
       {:ok, hn_subscription} ->
         conn
-        |> put_flash(:info, "Hn subscription updated successfully.")
+        |> put_flash(:info, "Subscription updated successfully.")
         |> redirect(to: page_path(conn, :profile))
       {:error, changeset} ->
         render(conn, "edit.html", hn_subscription: hn_subscription, changeset: changeset)
@@ -49,7 +49,7 @@ defmodule Feedya.HN.SubscriptionController do
     Repo.delete!(hn_subscription)
 
     conn
-    |> put_flash(:info, "Hn subscription deleted successfully.")
+    |> put_flash(:info, "Subscription deleted successfully.")
     |> redirect(to: page_path(conn, :profile))
   end
 
