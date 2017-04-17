@@ -9,6 +9,9 @@ use Mix.Config
 config :feedya,
   ecto_repos: [Feedya.Repo]
 
+config :feedya,
+  email: System.get_env("FEEDYA_EMAIL")
+
 # Configures the endpoint
 config :feedya, Feedya.Endpoint,
   url: [host: "localhost"],
@@ -29,8 +32,18 @@ config :guardian, Guardian,
   ttl: { 30, :days },
   allowed_drift: 2000,
   verify_issuer: true, # optional
-  secret_key: <<57, 177, 235, 135, 194, 219, 41, 154, 230, 235, 205, 169, 179, 25, 102, 242>>,
+  secret_key: System.get_env("GUARDIAN_KEY"),
   serializer: Feedya.GuardianSerializer
+
+config :feedya, Feedya.Mailer,
+  adapter: Bamboo.SMTPAdapter,
+  server: "smtp.yandex.ru",
+  port: 465,
+  username: System.get_env("SMTP_USERNAME"),
+  password: System.get_env("SMTP_PASSWORD"),
+  tls: :if_available, # can be `:always` or `:never`
+  ssl: true, # can be `true`
+  retries: 3
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

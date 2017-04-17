@@ -48,7 +48,7 @@ defmodule Feedya.HN.Story do
     Repo.one(from s in Story, select: max(s.hn_id)) || 0
   end
 
-  def create!(story) do
+  def create!(story) when is_map(story) do
     Repo.insert!(Story.changeset(%Story{}, story))
   end
 
@@ -82,12 +82,18 @@ defmodule Feedya.HN.Story do
     ids = get_ids.()
     to_fetch = ids -- already_fetched(ids)
 
-    to_fetch
-    |> Flow.from_enumerable
-    |> Flow.partition(stages: 100)
-    |> Flow.map(&HN.story/1)
-    |> Flow.partition(stages: 100)
-    |> Flow.map(&create!/1)
-    |> Flow.run
+    Enum.map(
+      to_fetch,
+      fn(id) ->
+        spawn(
+          fn() ->
+            story = HN.story(id)
+            if story do
+              create!(story)
+            end
+          end
+        )
+      end
+    )
   end
 end

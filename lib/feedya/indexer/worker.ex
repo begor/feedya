@@ -6,19 +6,19 @@ defmodule Feedya.Indexer.Worker do
 
   @period 30 * 1000
 
-  def start_link(subscription, opts \\ []) do
-    GenServer.start_link(__MODULE__, subscription, opts)
+  def start_link(sub_id, opts \\ []) do
+    GenServer.start_link(__MODULE__, sub_id, opts)
   end
 
-  def init(subscription) do
+  def init(sub_id) do
     schedule_work
-    {:ok, subscription}
+    {:ok, sub_id}
   end
 
-  def handle_info(:index, subscription) do
-    Subscription.index!(subscription)
+  def handle_info(:index, sub_id) do
+    Subscription.index!(sub_id)
     schedule_work
-    {:noreply, subscription}
+    {:noreply, sub_id}
   end
 
   defp schedule_work do

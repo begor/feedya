@@ -18,7 +18,7 @@ defmodule Feedya.API.HN do
   ## Interface ##
 
 
-  def story(id), do: fetch_from_url("item/#{Integer.to_string(id)}.json")
+  def story(id), do: fetch_from_url("item/#{id}.json")
 
   def top_ids, do: fetch_from_url("topstories.json")
 
