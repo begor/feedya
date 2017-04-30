@@ -4,11 +4,11 @@
 <h4>Terms:</h4>
 <p><%= Enum.join(@hn_subscription.terms, ", ") %></p>
 
-<%= if length(@hn_subscription.stories) > 0 do %>
-  <h4>Stories <span class="badge"><%=length(@hn_subscription.stories)%></span>:</h4>
+<%= if length(@hn_subscription.matched_stories) > 0 do %>
+  <h4>Stories <span class="badge"><%=length(@hn_subscription.matched_stories)%></span>:</h4>
   <ul class="list-group">
-    <%= for story <- Enum.sort_by(@hn_subscription.stories, fn(s) -> -s.score end)  do %>
-      <li class="list-group-item"><%= render Feedya.HN.StoryView, "_story.html", story: story, conn: @conn %></li>
+    <%= for matched <- @hn_subscription.matched_stories do %>
+      <li class="list-group-item"><%= render Feedya.HN.StoryView, "_story.html", matched: matched, conn: @conn %></li>
     <% end %>
   </ul>
 <%= else %>

@@ -2,7 +2,8 @@ defmodule Feedya.HN.Subscription do
   use Feedya.Web, :model
 
   alias Ecto.Changeset
-  alias Feedya.{Repo, HN.Subscription, HN.Story, User, Email, Mailer}
+  alias Feedya.{Repo, User, Email, Mailer}
+  alias Feedya.HN.{MatchedStory, Subscription, Story}
 
   @required [:terms, :name, :user_id]
 
@@ -11,7 +12,7 @@ defmodule Feedya.HN.Subscription do
     field :terms, {:array, :string}
     field :indexed_at, :naive_datetime
     belongs_to :user, User
-    many_to_many :stories, Story, join_through: "hn_subscription_stories"
+    has_many :matched_stories, MatchedStory
 
     timestamps()
   end
@@ -28,30 +29,38 @@ defmodule Feedya.HN.Subscription do
   def by_user(q, user) do
     from s in q,
     where: s.user_id == ^user.id,
-    preload: [:stories]
+    preload: [matched_stories: :story]
   end
 
   def index!(sub_id) do
     subscription = Repo.get!(Subscription, sub_id)
     
-    matched = subscription.terms
-              |> Enum.flat_map(&find_matched(&1, subscription.indexed_at))
-              |> Enum.uniq_by(fn s -> s.id end)
+    matched = Enum.reduce(
+        subscription.terms,
+        %{}, 
+        fn t, acc -> 
+          Map.put(acc, t, find_matched(t, subscription.indexed_at))
+        end
+    )
 
     Repo.transaction(fn ->
-      case matched do
-        [] -> :ok
-        _ ->  subscription
-              |> Repo.preload([:stories, :user])
-              |> save_matched_stories!(matched)
-              |> new_stories_mail!(matched)
-      end
+      subscription = Repo.preload(subscription, [:matched_stories, :user])
+      
+       
+      new = Enum.reduce(matched, 
+                         [],
+                         fn ({t, matched}, acc) -> 
+                            save_matched_stories!(subscription, t, matched)
+                            acc ++ matched
+                         end)
+      new_stories_mail!(new, subscription)
+      :ok
     end)
   end
 
   ### Implementation ###
 
-  defp new_stories_mail!(subscription, new_stories) do
+  defp new_stories_mail!(new_stories, subscription) do
     user = subscription.user
 
     user.email
@@ -72,12 +81,12 @@ defmodule Feedya.HN.Subscription do
     |> Repo.all
   end
 
-  defp save_matched_stories!(subscription, stories) do
-    subscription
-    |> change
-    |> put_assoc(:stories, stories)
-    |> put_change(:indexed_at, Ecto.DateTime.utc)
-    |> unique_constraint(:stories, message: "Story already present in subscription.")
-    |> Repo.update!
+  defp save_matched_stories!(subscription, term, stories) do
+    matched = Enum.map(
+      stories, 
+      fn s -> 
+        %{story_id: s.id, subscription_id: subscription.id, matched_by: term}
+      end)
+    Repo.insert_all(MatchedStory, matched)
   end
 end

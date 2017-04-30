@@ -14,7 +14,7 @@ defmodule Feedya.HN.SubscriptionController do
 
     case Repo.insert(changeset) do
       {:ok, hn_subscription} ->
-        Indexer.Supervisor.start!(hn_subscription)
+        Indexer.Supervisor.start!(hn_subscription.id)
         conn
         |> put_flash(:info, "Subscription created successfully.")
         |> redirect(to: page_path(conn, :profile))

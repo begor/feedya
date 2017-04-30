@@ -1,1 +1,2 @@
-<%= @story.author %>: <a target="_blank" href=<%= @story.url %>><%= @story.title %></a> (<%= @story.score %>)
+<span class="badge"><%= @matched.matched_by %></span>
+<%= @matched.story.author %>: <a target="_blank" href=<%= @matched.story.url %>><%= @matched.story.title %></a> (<%= @matched.story.score %>)
